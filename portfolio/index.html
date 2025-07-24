@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+      }
+      .animated-bg {
+        background: linear-gradient(270deg, #1e293b, #0f172a, #334155, #1e293b);
+        background-size: 600% 600%;
+        animation: gradientMove 16s ease infinite;
+      }
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .fade-in {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .fade-in.visible {
+        opacity: 1;
+        transform: none;
+      }
+      .card-animate {
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
+      }
+      .card-animate:hover {
+        transform: translateY(-8px) scale(1.03);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+      }
+      .btn-animate {
+        transition: background 0.3s, transform 0.2s;
+      }
+      .btn-animate:hover {
+        background: #334155;
+        transform: scale(1.05);
+      }
+      .skill-progress {
+        width: 0;
+        transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .skills-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 2px 12px 0 rgba(30, 41, 59, 0.12);
+        background: rgba(31, 41, 55, 0.95);
+        border-radius: 1rem;
+        border: 1px solid #33415522;
+      }
+      .skills-card:hover {
+        transform: translateY(-8px) scale(1.04);
+        box-shadow: 0 8px 32px 0 #38bdf8cc;
+        background: rgba(30, 41, 59, 0.98);
+      }
+      .skills-icon {
+        transition: color 0.3s, transform 0.3s;
+        color: #38bdf8;
+      }
+      .skills-card:hover .skills-icon {
+        color: #fbbf24;
+        transform: scale(1.2) rotate(-8deg);
+      }
+      .fade-in-skill {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 1s, transform 1s;
+      }
+      .fade-in-skill.visible {
+        opacity: 1;
+        transform: none;
+      }
+      .fade-in-edu {
+        opacity: 0;
+        transform: translateY(40px);
+        transition: opacity 1s, transform 1s;
+      }
+      .fade-in-edu.visible {
+        opacity: 1;
+        transform: none;
+      }
+      .opacity-0 {
+        opacity: 0;
+        transition: opacity 0.5s;
+      }
+      #about img,
+      #header-img {
+        transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+          filter 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+          transform 1.1s cubic-bezier(0.77, 0, 0.175, 1);
+        will-change: opacity, filter, transform;
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const fadeEls = document.querySelectorAll(".fade-in");
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+              }
+            });
+          },
+          { threshold: 0.15 }
+        );
+        fadeEls.forEach((el) => observer.observe(el));
+
+        // Fade-in for skills
+        const skillCards = document.querySelectorAll(".fade-in-skill");
+        const skillObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                // Animate progress bar
+                const bar = entry.target.querySelector(".skill-progress");
+                if (bar && bar.dataset.width) {
+                  bar.style.width = bar.dataset.width;
+                }
+              }
+            });
+          },
+          { threshold: 0.15 }
+        );
+        skillCards.forEach((card) => skillObserver.observe(card));
+
+        const eduCards = document.querySelectorAll(".fade-in-edu");
+        const eduObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+              }
+            });
+          },
+          { threshold: 0.15 }
+        );
+        eduCards.forEach((card) => eduObserver.observe(card));
+
+        // Rotating images for header and about me with transform effect
+        const images = [
+          "v.jpeg",
+          "e.jpeg",
+          "n.jpeg",
+          "k.jpeg",
+          "a.jpeg",
+          "t.jpeg",
+          "c.jpeg",
+          "d.jpeg",
+          "y.jpeg",
+          "z.jpeg",
+        ];
+        let currentImg = 0;
+        // About Me image
+        const aboutImg = document.querySelector("#about img");
+        // Header image (if you want to add one, add <img id="header-img" ...> in header section)
+        const headerImg = document.getElementById("header-img");
+        function switchImages() {
+          currentImg = (currentImg + 1) % images.length;
+          // Cool and elegant transform effect
+          if (aboutImg) {
+            aboutImg.style.filter = "blur(6px) brightness(1.2)";
+            aboutImg.style.transform = "scale(1.15) rotateY(40deg) skewY(2deg)";
+            aboutImg.style.opacity = "0.2";
+            setTimeout(() => {
+              aboutImg.src = images[currentImg];
+              aboutImg.style.filter = "blur(0px) brightness(1)";
+              aboutImg.style.transform =
+                "scale(1.05) rotateY(-30deg) skewY(-2deg)";
+              aboutImg.style.opacity = "1";
+              setTimeout(() => {
+                aboutImg.style.transform = "scale(1) rotateY(0deg) skewY(0deg)";
+              }, 500);
+            }, 400);
+          }
+          if (headerImg) {
+            headerImg.style.filter = "blur(6px) brightness(1.2)";
+            headerImg.style.transform =
+              "scale(1.15) rotateY(40deg) skewY(2deg)";
+            headerImg.style.opacity = "0.2";
+            setTimeout(() => {
+              headerImg.src = images[currentImg];
+              headerImg.style.filter = "blur(0px) brightness(1)";
+              headerImg.style.transform =
+                "scale(1.05) rotateY(-30deg) skewY(-2deg)";
+              headerImg.style.opacity = "1";
+              setTimeout(() => {
+                headerImg.style.transform =
+                  "scale(1) rotateY(0deg) skewY(0deg)";
+              }, 500);
+            }, 400);
+          }
+        }
+        setInterval(switchImages, 5000);
+      });
+    </script>
+  </head>
+
+  <body class="bg-black text-gray-200 animated-bg">
+    <nav class="bg-gray-900 p-4 fixed top-0 w-full z-10">
+      <div class="container mx-auto flex justify-between items-center">
+        <a class="text-2xl font-bold text-white" href="#"> Venkatesh's </a>
+        <ul class="flex space-x-4">
+          <li>
+            <a class="hover:text-gray-400" href="#about"> About </a>
+          </li>
+          <li>
+            <a class="hover:text-gray-400" href="#education"> Education </a>
+          </li>
+          <li>
+            <a class="hover:text-gray-400" href="#skills"> Skills </a>
+          </li>
+          <li>
+            <a class="hover:text-gray-400" href="#projects"> Projects </a>
+          </li>
+          <li>
+            <a class="hover:text-gray-400" href="#contact"> Contact </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="text-center py-20 bg-gray-900 scroll-margin-top fade-in">
+      <div class="container mx-auto">
+        <h1 class="text-5xl font-bold text-white mb-4">
+          Hello, I'm Venkatesh M
+        </h1>
+        <p class="text-xl mb-8 mx-auto max-w-lg">
+          I'm a Passionate Full Stack Developer
+        </p>
+        <div class="flex justify-center space-x-4 mb-8">
+          <a class="text-gray-400 hover:text-white" href="#">
+            <i class="fab fa-facebook-f"> </i>
+          </a>
+
+          <a
+            class="text-gray-400 hover:text-white"
+            href="https://www.linkedin.com//"
+          >
+            <i class="fab fa-linkedin-in"> </i>
+          </a>
+          <a class="text-gray-400 hover:text-white" href="http://github.com/">
+            <i class="fab fa-github"> </i>
+          </a>
+        </div>
+        <a
+          class="bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 btn-animate"
+          href="#projects"
+        >
+          View My Work
+        </a>
+      </div>
+    </section>
+
+    <section class="py-20 fade-in" id="about">
+      <div class="container mx-auto flex flex-col md:flex-row items-center">
+        <div class="md:w-1/2 mb-8 md:mb-0 flex justify-center md:justify-start">
+          <div
+            class="w-[300px] h-[300px] rounded-full overflow-hidden shadow-lg ring-4 ring-gray-700"
+          >
+            <img
+              alt="Portrait of Venkatesh, a web developer, smiling and looking at the camera"
+              class="object-cover w-full h-full"
+              height="300"
+              width="300"
+              src="v.jpeg"
+            />
+          </div>
+        </div>
+        <div class="md:w-1/2 md:pl-12">
+          <h2 class="text-4xl font-bold text-white mb-4">About Me</h2>
+          <p class="text-lg mb-4">
+            I'm a Full Stack Developer with a passion for creating dynamic and
+            responsive web applications. I have experience in both frontend and
+            backend development, and I'm always eager to learn new technologies
+            and improve my skills.
+          </p>
+        </div>
+      </div>
+    </section>
+    <section class="py-24 bg-gray-900" id="skills">
+      <div class="container flex flex-col items-center">
+        <h2
+          class="section-title text-4xl font-bold text-center text-white mb-16"
+        >
+          Skills
+        </h2>
+        <div
+          class="flex flex-row flex-wrap justify-center items-center gap-x-20 gap-y-10 pb-6"
+        >
+          <div class="fade-in-skill mb-10 mt-4 max-w-xs w-64 flex-shrink-0">
+            <div
+              class="skills-card text-center p-6 w-64 border-2 border-gray-700 shadow-lg"
+            >
+              <i class="fab fa-js-square fa-3x skills-icon mb-2"></i>
+              <h5 class="text-xl font-bold mb-2">JavaScript</h5>
+              <p class="mb-2 text-gray-300">
+                Experienced in ES6+, DOM manipulation, asynchronous programming,
+                and building interactive web applications.
+              </p>
+              <div
+                class="w-full bg-gray-700 rounded-full h-2.5 mb-2 overflow-hidden"
+              >
+                <div
+                  class="skill-progress bg-yellow-400 h-2.5 rounded-full"
+                  data-width="60%"
+                ></div>
+              </div>
+              <small class="text-gray-400">Intermediate</small>
+            </div>
+          </div>
+          <div class="fade-in-skill mb-10 mt-4 max-w-xs w-64 flex-shrink-0">
+            <div
+              class="skills-card text-center p-6 w-64 border-2 border-gray-700 shadow-lg"
+            >
+              <i class="fab fa-java fa-3x skills-icon mb-2"></i>
+              <h5 class="text-xl font-bold mb-2">Java</h5>
+              <p class="mb-2 text-gray-300">
+                Proficient in object-oriented programming, data structures, and
+                building backend services and applications with Java.
+              </p>
+              <div
+                class="w-full bg-gray-700 rounded-full h-2.5 mb-2 overflow-hidden"
+              >
+                <div
+                  class="skill-progress bg-red-400 h-2.5 rounded-full"
+                  data-width="60%"
+                ></div>
+              </div>
+              <small class="text-gray-400">Intermediate</small>
+            </div>
+          </div>
+          <div class="fade-in-skill mb-10 mt-4 max-w-xs w-64 flex-shrink-0">
+            <div
+              class="skills-card text-center p-6 w-64 border-2 border-gray-700 shadow-lg"
+            >
+              <i class="fas fa-database fa-3x skills-icon mb-2"></i>
+              <h5 class="text-xl font-bold mb-2">MySQL</h5>
+              <p class="mb-2 text-gray-300">
+                Skilled in designing, querying, and optimizing relational
+                databases for robust backend solutions.
+              </p>
+              <div
+                class="w-full bg-gray-700 rounded-full h-2.5 mb-2 overflow-hidden"
+              >
+                <div
+                  class="skill-progress bg-blue-400 h-2.5 rounded-full"
+                  data-width="60%"
+                ></div>
+              </div>
+              <small class="text-gray-400">Intermediate</small>
+            </div>
+          </div>
+          <div class="fade-in-skill mb-10 mt-4 max-w-xs w-64 flex-shrink-0">
+            <div
+              class="skills-card text-center p-6 w-64 border-2 border-gray-700 shadow-lg"
+            >
+              <i class="fab fa-html5 fa-3x skills-icon mb-2"></i>
+              <h5 class="text-xl font-bold mb-2">HTML &amp; CSS</h5>
+              <p class="mb-2 text-gray-300">
+                Proficient in semantic HTML5, modern CSS3, Flexbox, Grid, and
+                responsive design for visually appealing layouts.
+              </p>
+              <div
+                class="w-full bg-gray-700 rounded-full h-2.5 mb-2 overflow-hidden"
+              >
+                <div
+                  class="skill-progress bg-pink-400 h-2.5 rounded-full"
+                  data-width="85%"
+                ></div>
+              </div>
+              <small class="text-gray-400">Advanced</small>
+            </div>
+          </div>
+          <div class="fade-in-skill mb-10 mt-4 max-w-xs w-64 flex-shrink-0">
+            <div
+              class="skills-card text-center p-6 w-64 border-2 border-gray-700 shadow-lg"
+            >
+              <i class="fab fa-bootstrap fa-3x skills-icon mb-2"></i>
+              <h5 class="text-xl font-bold mb-2">Bootstrap</h5>
+              <p class="mb-2 text-gray-300">
+                Expert in using Bootstrap to rapidly develop responsive and
+                mobile-first web interfaces.
+              </p>
+              <div
+                class="w-full bg-gray-700 rounded-full h-2.5 mb-2 overflow-hidden"
+              >
+                <div
+                  class="skill-progress bg-purple-400 h-2.5 rounded-full"
+                  data-width="80%"
+                ></div>
+              </div>
+              <small class="text-gray-400">Advanced</small>
+            </div>
+          </div>
+          <div class="fade-in-skill mb-10 mt-4 max-w-xs w-64 flex-shrink-0">
+            <div
+              class="skills-card text-center p-6 w-64 border-2 border-gray-700 shadow-lg"
+            >
+              <i class="fab fa-react fa-3x skills-icon mb-2"></i>
+              <h5 class="text-xl font-bold mb-2">MERN Stack</h5>
+              <p class="mb-2 text-gray-300">
+                Hands-on experience with MongoDB, Express.js, React, and Node.js
+                for building full-stack web applications.
+              </p>
+              <div
+                class="w-full bg-gray-700 rounded-full h-2.5 mb-2 overflow-hidden"
+              >
+                <div
+                  class="skill-progress bg-green-400 h-2.5 rounded-full"
+                  data-width="25%"
+                ></div>
+              </div>
+              <small class="text-gray-400">Beginner</small>
+            </div>
+          </div>
+          <div class="fade-in-skill mb-10 mt-4 max-w-xs w-64 flex-shrink-0">
+            <div
+              class="skills-card text-center p-6 w-64 border-2 border-gray-700 shadow-lg"
+            >
+              <i class="fab fa-cuttlefish fa-3x skills-icon mb-2"></i>
+              <h5 class="text-xl font-bold mb-2">C</h5>
+              <p class="mb-2 text-gray-300">
+                Advanced in C programming, including memory management,
+                pointers, and building efficient algorithms and system-level
+                applications.
+              </p>
+              <div
+                class="w-full bg-gray-700 rounded-full h-2.5 mb-2 overflow-hidden"
+              >
+                <div
+                  class="skill-progress bg-cyan-400 h-2.5 rounded-full"
+                  data-width="85%"
+                ></div>
+              </div>
+              <small class="text-gray-400">Advanced</small>
+            </div>
+          </div>
+          <div class="fade-in-skill mb-10 mt-4 max-w-xs w-64 flex-shrink-0">
+            <div
+              class="skills-card text-center p-6 w-64 border-2 border-gray-700 shadow-lg"
+            >
+              <i class="fas fa-laptop-code fa-3x skills-icon mb-2"></i>
+              <h5 class="text-xl font-bold mb-2">C++</h5>
+              <p class="mb-2 text-gray-300">
+                Intermediate in C++ programming, including OOP concepts, STL,
+                and building efficient algorithms and applications.
+              </p>
+              <div
+                class="w-full bg-gray-700 rounded-full h-2.5 mb-2 overflow-hidden"
+              >
+                <div
+                  class="skill-progress bg-indigo-400 h-2.5 rounded-full"
+                  data-width="60%"
+                ></div>
+              </div>
+              <small class="text-gray-400">Intermediate</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="py-20 bg-gray-900" id="projects">
+      <div class="container mx-auto">
+        <h2 class="text-4xl font-bold text-center text-white mb-12">
+          Projects
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-gray-800 p-6 rounded-lg card-animate">
+            <img
+              alt="C:\Users\sanja\OneDrive\Desktop\FSP\Venky\Online-Book-Store-Logo-Generator-VL007.jpg"
+              class="rounded mb-4 transition-transform duration-300 hover:scale-105"
+              height="400"
+              src="bk.jpg"
+              width="600"
+            />
+            <h3 class="text-2xl font-bold mb-2">Online Book Store</h3>
+            <p class="text-lg mb-4">
+              Created a responsive web application for an online book store
+              using HTML, CSS, JavaScript, and Bootstrap. Implemented features
+              like product listing, cart management, and user authentication.
+            </p>
+            <a
+              class="text-gray-400 hover:text-white"
+              href="http://127.0.0.1:5501/bkstore.html"
+            >
+              View Project
+            </a>
+          </div>
+          <div class="bg-gray-800 p-6 rounded-lg card-animate">
+            <img
+              alt="C:\Users\sanja\OneDrive\Desktop\FSP\Venky\mod.jpeg"
+              class="rounded mb-4 transition-transform duration-300 hover:scale-105"
+              height="400"
+              src="mod.jpeg"
+              width="600"
+            />
+            <h3 class="text-2xl font-bold mb-2">Mood Tracker</h3>
+            <p class="text-lg mb-4">
+              Developed a mood tracker web application using HTML, CSS,
+              JavaScript, and Bootstrap. Implemented features like mood logging,
+              analytics, and user authentication.
+            </p>
+            <a
+              class="text-gray-400 hover:text-white"
+              href="http://127.0.0.1:5501/modtrack.html"
+            >
+              View Project
+            </a>
+          </div>
+          <div class="bg-gray-800 p-6 rounded-lg card-animate">
+            <img
+              alt="C:\Users\sanja\OneDrive\Desktop\FSP\Venky\port.jpeg"
+              class="rounded mb-4 transition-transform duration-300 hover:scale-105"
+              height="400"
+              src="port.jpeg"
+              width="600"
+            />
+            <h3 class="text-2xl font-bold mb-2">Portfolio Website</h3>
+            </h3>
+            <p class="text-lg mb-4">
+              Created a personal portfolio website to showcase my skills and
+              projects using HTML, CSS, JavaScript, and Bootstrap. Implemented
+              features like project gallery, contact form, and responsive design.
+            </p>
+            <a class="text-gray-400 hover:text-white" href="http://127.0.0.1:5501/index.html">
+              View Project
+            </a>
+          </div>
+          <div class="bg-gray-800 p-6 rounded-lg card-animate">
+            <img
+              alt="C:\Users\sanja\OneDrive\Desktop\FSP\Venky\chatbot.jpeg"
+              class="rounded mb-4 transition-transform duration-300 hover:scale-105"
+              height="400"
+              src="chatbot.jpeg"
+              width="600"
+            />
+            <h3 class="text-2xl font-bold mb-2">Chat bot</h3>
+            <p class="text-lg mb-4">
+              Developed a chatbot like chatgpt,blackbox ai using HTML, CSS, JavaScript, and
+              Bootstrap. Implemented features like user interaction, response
+              generation, and integration with backend services.
+            </p>
+            <a
+              class="text-gray-400 hover:text-white" href="http://127.0.0.1:5501/chat.html">
+              View Project
+            </a>
+          </div>
+          <div class="bg-gray-800 p-6 rounded-lg card-animate">
+            <img
+              alt="Screenshot of Project 5, a blog platform"
+              class="rounded mb-4 transition-transform duration-300 hover:scale-105"
+              height="400"
+              src="/hive.png"
+              width="600"
+            />
+            <h3 class="text-2xl font-bold mb-2">SRIT HIVE Website</h3>
+            <p class="text-lg mb-4">
+              Created a website for SRIT HIVE Innovation Club which is now
+              deployed under srit.org
+            </p>
+            <a
+              class="text-gray-400 hover:text-white"
+              href="http://srit.org/hive"
+            >
+              View Project
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="py-20 bg-gray-900 fade-in" id="education">
+      <div class="container mx-auto">
+        <h2 class="text-4xl font-bold text-center text-white mb-12">
+          Education
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div
+            class="bg-gradient-to-br from-blue-900 via-gray-800 to-indigo-900 p-6 rounded-2xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl fade-in-edu"
+          >
+            <div class="flex flex-col items-center">
+              <span
+                class="inline-block bg-blue-600 text-white rounded-full p-4 mb-4 animate-bounce"
+              >
+                <i class="fas fa-graduation-cap fa-2x"></i>
+              </span>
+              <h3 class="text-2xl font-bold mb-2 text-white">
+                Bachelor of Computer Science and Engineering
+              </h3>
+              <p class="text-lg mb-4 text-blue-200">
+                Sri Ramakrishna Institute of Technology, 2022-2026
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-gradient-to-br from-purple-900 via-gray-800 to-pink-900 p-6 rounded-2xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl fade-in-edu"
+          >
+            <div class="flex flex-col items-center">
+              <span
+                class="inline-block bg-purple-600 text-white rounded-full p-4 mb-4 animate-bounce"
+              >
+                <i class="fas fa-university fa-2x"></i>
+              </span>
+              <h3 class="text-2xl font-bold mb-2 text-white">
+                Higher Secondary Certificate
+              </h3>
+              <p class="text-lg mb-4 text-purple-200">
+                Ashram Matriculation Higher Secondary School, 2020-2022
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-gradient-to-br from-green-900 via-gray-800 to-teal-900 p-6 rounded-2xl shadow-xl transform transition duration-500 hover:scale-105 hover:shadow-2xl fade-in-edu"
+          >
+            <div class="flex flex-col items-center">
+              <span
+                class="inline-block bg-green-600 text-white rounded-full p-4 mb-4 animate-bounce"
+              >
+                <i class="fas fa-school fa-2x"></i>
+              </span>
+              <h3 class="text-2xl font-bold mb-2 text-white">
+                Secondary School Leaving Certificate
+              </h3>
+              <p class="text-lg mb-4 text-green-200">
+                Ashram Matriculation Higher Secondary School, 2020
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="py-20" id="contact">
+      <div class="container mx-auto">
+        <h2 class="text-4xl font-bold text-center text-white mb-12">
+          Contact Me
+        </h2>
+        <div class="max-w-lg mx-auto bg-gray-900 p-8 rounded-lg">
+          <form action="#" method="POST">
+            <div class="mb-4">
+              <label class="block text-lg mb-2" for="name"> Name </label>
+              <input
+                class="w-full p-2 rounded bg-gray-800 text-white"
+                id="name"
+                name="name"
+                required=""
+                type="text"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-lg mb-2" for="email"> Email </label>
+              <input
+                class="w-full p-2 rounded bg-gray-800 text-white"
+                id="email"
+                name="email"
+                required=""
+                type="email"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-lg mb-2" for="message"> Message </label>
+              <textarea
+                class="w-full p-2 rounded bg-gray-800 text-white"
+                id="message"
+                name="message"
+                required=""
+                rows="4"
+              ></textarea>
+            </div>
+            <button
+              class="w-full bg-gray-800 text-white py-2 px-4 rounded hover:bg-gray-700 btn-animate"
+              type="submit"
+            >
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <footer class="bg-gray-900 py-4">
+      <div class="container mx-auto text-center">
+        <p>© 2025 Venkatesh M- portfolio.All Rights Are Reserved.</p>
+        <div class="flex justify-center space-x-4 mt-4">
+          <a class="text-gray-400 hover:text-white" href="#">
+            <i class="fab fa-facebook-f"> </i>
+          </a>
+          <a class="text-gray-400 hover:text-white" href="#">
+            <i class="fab fa-linkedin-in"> </i>
+          </a>
+          <a class="text-gray-400 hover:text-white" href="#">
+            <i class="fab fa-github"> </i>
+          </a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
