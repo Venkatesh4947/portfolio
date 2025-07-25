@@ -655,14 +655,14 @@
           Contact Me
         </h2>
         <div class="max-w-lg mx-auto bg-gray-900 p-8 rounded-lg">
-          <form action="#" method="POST">
+          <form id="contactForm" action="https://formspree.io/f/xeozggye" method="POST">
             <div class="mb-4">
               <label class="block text-lg mb-2" for="name"> Name </label>
               <input
                 class="w-full p-2 rounded bg-gray-800 text-white"
                 id="name"
                 name="name"
-                required=""
+                required
                 type="text"
               />
             </div>
@@ -672,7 +672,7 @@
                 class="w-full p-2 rounded bg-gray-800 text-white"
                 id="email"
                 name="email"
-                required=""
+                required
                 type="email"
               />
             </div>
@@ -682,7 +682,7 @@
                 class="w-full p-2 rounded bg-gray-800 text-white"
                 id="message"
                 name="message"
-                required=""
+                required
                 rows="4"
               ></textarea>
             </div>
@@ -692,7 +692,30 @@
             >
               Send Message
             </button>
+            <p id="formSuccess" class="text-green-400 mt-4 hidden">Thank you! Your message has been sent.</p>
           </form>
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              const form = document.getElementById("contactForm");
+              const successMsg = document.getElementById("formSuccess");
+              if (form) {
+                form.addEventListener("submit", function (e) {
+                  e.preventDefault();
+                  const data = new FormData(form);
+                  fetch(form.action, {
+                    method: "POST",
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
+                  }).then(response => {
+                    if (response.ok) {
+                      form.reset();
+                      successMsg.style.display = "block";
+                    }
+                  });
+                });
+              }
+            });
+          </script>
         </div>
       </div>
     </section>
